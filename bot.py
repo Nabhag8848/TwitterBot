@@ -4,22 +4,45 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-API_KEY = os.getenv('TWITTER_API_KEY')
-API_SECRET = os.getenv('TWITTER_API_KEY_SECRET')
-ACCESS_TOKEN = os.getenv('TWITTER_ACCESS_TOKEN')
-TOKEN_SECRET = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
+consumer_key = os.getenv('TWITTER_API_KEY')
+consumer_secret = os.getenv('TWITTER_API_KEY_SECRET')
+access_token = os.getenv('TWITTER_ACCESS_TOKEN')
+access_token_secret = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
 
-twitter_oauth = tweepy.OAuthHandler(API_KEY, API_SECRET)
-twitter_oauth.set_access_token(ACCESS_TOKEN, TOKEN_SECRET)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
 
-api = tweepy.API(twitter_oauth)
+api = tweepy.API(auth)
 
 try:
-    print(api.verify_credentials())
+   #  print(api.verify_credentials())
     print("Successfully logged in")
 except tweepy.TweepError as e:
-    print(e)
+    print(e) 
 except Exception as e:
     print(e)
 
-api.update_status("I can Do it!!")
+
+def get_user_timeline():
+   userTimeline = api.user_timeline()
+   for tweet in userTimeline:
+      print(str(tweet.id) + ' -> ' + tweet.text)
+
+
+# print(tweets)
+# print(tweets[0].id)
+# print(tweets[0].text)
+# print(tweets[0].entities)
+
+def get_mention_timeline():
+   
+   tweets = api.mentions_timeline()
+   for tweet in tweets:
+      if '#Nabhag' in tweet.text:
+         print(str(tweet.id) + ' -> ' + tweet.text)
+         api.destroy_favorite(tweet.id)
+         api.unretweet(tweet.id)
+   
+
+
+
